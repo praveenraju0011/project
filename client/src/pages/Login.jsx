@@ -1,13 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
+import { LoginUser } from "../apicalls/users";
 
 const Login = () => {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("register form submit");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    console.log(formData);
+    const response = await LoginUser(formData);
+    if (response.success) {
+      console.log("login form submitted successfully");
+    } else {
+      console.log(response.message);
+    }
+};
+
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
       <div
@@ -18,14 +39,28 @@ const Login = () => {
         <Form style={{ width: "100%" }} onSubmit={handleSubmit}>
           <Form.Group className="mb-3 mt-5" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" required />
+            <Form.Control
+              type="email"
+              placeholder="Enter email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
             <Form.Text className="text-muted">
               We'll never share your email with anyone else.
             </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" required />
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
           </Form.Group>
 
           <div className="d-flex flex-column justify-content-center">
