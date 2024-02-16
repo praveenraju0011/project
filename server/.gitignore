@@ -1,0 +1,17 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore build output (e.g., for TypeScript or other compiled languages)
+/dist/
+/build/
+
+
+
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+
+# Ignore npm/yarn lock files
+package-lock.json
+yarn.lock
