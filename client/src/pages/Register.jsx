@@ -1,11 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
+import { RegisterUser } from "../apicalls/users";
+
 const Register = () => {
-  const handleSubmit = (event) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("register form submit");
+    try {
+        const response = await RegisterUser(formData);
+        if (response.success) {
+          console.log("Login success");
+          localStorage.setItem("token", response.data);
+          window.location.href = "/";
+        } else {
+          console.log(response.message);
+        }
+    } catch (error) {
+        console.log(error);     
+    }
   };
 
   return (
@@ -18,18 +46,40 @@ const Register = () => {
         <Form style={{ width: "100%" }} onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicName">
             <Form.Label>Name</Form.Label>
-            <Form.Control type="text" placeholder="Enter name" required />
+            <Form.Control
+              type="text"
+              placeholder="Enter name"
+              // Pass the handleChange function to the onChange event
+              onChange={handleChange}
+              name="name" // Add the name attribute
+              value={formData.name} // Set the value attribute
+              required
+            />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" required />
+            <Form.Control
+              type="email"
+              placeholder="Enter email"
+              onChange={handleChange}
+              name="email" // Add the name attribute
+              value={formData.email} // Set the value attribute
+              required
+            />
             <Form.Text className="text-muted">
               We'll never share your email with anyone else.
             </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" required />
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              onChange={handleChange}
+              name="password" // Add the name attribute
+              value={formData.password} // Set the value attribute
+              required
+            />
           </Form.Group>
 
           <div className="d-flex flex-column justify-content-center">
