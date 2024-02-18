@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginUser } from "../apicalls/users";
 
 const Login = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/");
+    }
+  }, []);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -19,15 +25,15 @@ const Login = () => {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
     console.log(formData);
     const response = await LoginUser(formData);
     if (response.success) {
       console.log("login form submitted successfully");
+      localStorage.setItem("token", response.data);
     } else {
       console.log(response.message);
     }
-};
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
