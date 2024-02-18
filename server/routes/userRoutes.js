@@ -2,9 +2,28 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const User = require("../model/userModel");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 router.post("/register", async (req, res) => {
   try {
+    if (!req.body.email) {
+      return res.send({
+        success: false,
+        message: "Email not entered",
+      });
+    }
+    if (!req.body.name) {
+      return res.send({
+        success: false,
+        message: "Name not entered",
+      });
+    }
+    if (!req.body.password) {
+      return res.send({
+        success: false,
+        message: "Password not entered",
+      });
+    }
     const userExist = await User.findOne({ email: req.body.email });
 
     if (userExist) {
@@ -31,34 +50,73 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
- 
+    if (!req.body.email) {
+      return res.status(400).send({
+        success: false,
+        message: "Email not entered",
+      });
+    }
+    if (!req.body.password) {
+      return res.status(400).send({
+        success: false,
+        message: "Password not entered",
+      });
+    }
     const user = await User.findOne({ email: req.body.email });
-   
+
     if (!user) {
-      return res.send({
+      return res.status(400).send({
         success: false,
         message: "User does not exist",
       });
     }
-   
+    const token = jwt.sign({ userId: user._id }, process.env.jwt_secret, {
+      expiresIn: "1d",
+    });
     const validPassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
 
     if (!validPassword) {
-      return res.send({
+      return res.status(400).send({
         success: false,
         message: "Invalid Password",
       });
     }
-   
-    res.send({
+
+    res.status(200).send({
       success: true,
       message: "User Logged in",
+      data: token,
     });
   } catch (error) {
     console.log(error);
+  }
+});
+
+router.get("/currentUser", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res.status(400).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+    console.log(user);
+    return res.status(200).send({
+      success: true,
+      message: "User fetched successfully",
+      data: user,
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: "Something went wrong",
+      error: error,
+    });
   }
 });
 

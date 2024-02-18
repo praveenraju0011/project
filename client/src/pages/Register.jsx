@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RegisterUser } from "../apicalls/users";
 
 const Register = () => {
@@ -10,10 +10,9 @@ const Register = () => {
     email: "",
     password: "",
   });
-
+  const navigate = useNavigate();
   const handleChange = (event) => {
     const { name, value } = event.target;
-
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
@@ -23,16 +22,16 @@ const Register = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-        const response = await RegisterUser(formData);
-        if (response.success) {
-          console.log("Login success");
-          localStorage.setItem("token", response.data);
-          window.location.href = "/";
-        } else {
-          console.log(response.message);
-        }
+      const response = await RegisterUser(formData);
+      if (response.success) {
+        console.log("Login success");
+        localStorage.setItem("token", response.data);
+        navigate("/login");
+      } else {
+        console.log(response.message);
+      }
     } catch (error) {
-        console.log(error);     
+      console.log(error);
     }
   };
 
