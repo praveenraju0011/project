@@ -1,9 +1,22 @@
 import React from "react";
-import Nav from "react-bootstrap/Nav";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import { Nav, NavDropdown } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { SetUser } from "../redux/usersSlice";
+import { useEffect } from "react";
 
 const NavbarComponent = () => {
-  // const { user } = useSelector((state) => state.users);
+  const { user } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    dispatch(SetUser(null));
+    navigate("/login");
+  };
+
+
   return (
     <div>
       <Nav
@@ -11,16 +24,21 @@ const NavbarComponent = () => {
         bg="primary"
         variant="dark"
       >
-        <Nav.Link href="/">Home</Nav.Link>
-        <Nav.Link href="/login">Login</Nav.Link>
-        <Nav.Link href="/register">SignUp</Nav.Link>
-
-        <NavDropdown title="Profile" id="dropDownId">
-          <NavDropdown.Item href="#action3">Edit Profile</NavDropdown.Item>
-
-          <NavDropdown.Divider />
-          <NavDropdown.Item href="#action5">Logout</NavDropdown.Item>
-        </NavDropdown>
+        <Nav.Link onClick={() => navigate("/")}>Home</Nav.Link>
+        {user ? (
+          <NavDropdown title="Profile" id="dropdownId">
+            <NavDropdown.Item onClick={() => navigate("/edit-profile")}>
+              Edit Profile
+            </NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+          </NavDropdown>
+        ) : (
+          <>
+            <Nav.Link onClick={() => navigate("/login")}>Login</Nav.Link>
+            <Nav.Link onClick={() => navigate("/register")}>Sign Up</Nav.Link>
+          </>
+        )}
       </Nav>
     </div>
   );

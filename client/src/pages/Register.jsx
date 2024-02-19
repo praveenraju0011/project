@@ -25,7 +25,6 @@ const Register = () => {
       const response = await RegisterUser(formData);
       if (response.success) {
         console.log("Login success");
-        localStorage.setItem("token", response.data);
         navigate("/login");
       } else {
         console.log(response.message);

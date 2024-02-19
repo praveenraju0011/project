@@ -8,11 +8,11 @@ import UserPage from "./pages/UserPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavbarComponent from "./components/NavbarComponent";
 import Protected from "./components/Protected";
+import EditProfile from "./pages/EditProfile";
 function App() {
   return (
     <div>
       <BrowserRouter>
-        <NavbarComponent />
         <Routes>
           <Route
             path="/"
@@ -26,6 +26,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/userpage" element={<UserPage />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
         </Routes>
       </BrowserRouter>
     </div>

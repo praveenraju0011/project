@@ -25,14 +25,17 @@ const Login = () => {
   };
 
   const handleSubmit = async (event) => {
+    event.preventDefault();
     console.log(formData);
     const response = await LoginUser(formData);
+    console.log(response);
     if (response.success) {
       console.log("login form submitted successfully");
       localStorage.setItem("token", response.data);
     } else {
       console.log(response.message);
     }
+    window.location.reload();
   };
 
   return (
