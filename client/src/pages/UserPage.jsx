@@ -1,8 +1,10 @@
 import React from 'react'
-
+import NavbarComponent from '../components/NavbarComponent'
 const UserPage = () => {
   return (
-    <div>UserPage</div>
+    <div>
+       <NavbarComponent />
+      UserPage</div>
   )
 }
 
